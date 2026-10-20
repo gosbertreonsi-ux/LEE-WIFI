@@ -1,4 +1,87 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mizizi Admin</title><link rel="stylesheet" href="styles.css"></head><body>
-<div class="wrap"><header class="top"><span class="brand">Mizizi <b>Admin</b></span><button class="btn ghost" id="out" hidden>Sign out</button></header>
-<section id="login" class="card" style="max-width:420px" hidden><h2>Sign in</h2><label for="em">Email</label><input id="em" type="email" autocomplete="username"><label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password"><button class="btn" id="in">Sign in</button><div id="lMsg"></div></section>
-<section id="app" hidden><nav class="tabs" id="tabs"></nav><div id="view"></div></section></div><footer class="swatch" aria-hidden="true"><i style="background:#1c1713"></i><i style="background:#4a3320"></i><i style="background:#7f5f3c"></i><i style="background:#c4a075"></i><i style="background:#b07a37"></i><i style="background:#6b2a08"></i><i style="background:#b85c05"></i></footer><script src="admin.js"></script></body></html>
+```html
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17130f">
+  <meta name="description" content="LEE WIFI administration dashboard">
+  <title>LEE WIFI — Admin Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="admin.js" defer></script>
+</head>
+<body class="admin-page">
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="/" aria-label="LEE WIFI home">
+        LEE <b>WIFI</b><span class="brand-dot">.</span>
+        <span>ADMIN</span>
+      </a>
+
+      <div class="admin-header-actions">
+        <span id="adminIdentity" class="muted"></span>
+        <button class="btn ghost" id="refresh" type="button" hidden>
+          Refresh data
+        </button>
+        <button class="btn ghost" id="out" type="button" hidden>
+          Sign out
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section id="login" class="card admin-login" hidden>
+        <p class="eyebrow">LEE WIFI MANAGEMENT</p>
+        <h1>Admin sign in</h1>
+        <p class="muted">Sign in to manage packages, payments, vouchers and sessions.</p>
+
+        <form id="loginForm">
+          <label for="em">Email address</label>
+          <input
+            id="em"
+            name="email"
+            type="email"
+            autocomplete="username"
+            required
+          >
+
+          <label for="pw">Password</label>
+          <input
+            id="pw"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+          >
+
+          <button class="btn" id="in" type="submit">Sign in</button>
+          <div id="lMsg" aria-live="polite"></div>
+        </form>
+      </section>
+
+      <section id="app" hidden>
+        <div class="admin-welcome">
+          <div>
+            <p class="eyebrow">CONTROL CENTRE</p>
+            <h1 id="pageTitle">Dashboard</h1>
+          </div>
+        </div>
+
+        <nav class="admin-tabs tabs" id="tabs" aria-label="Admin sections"></nav>
+
+        <div id="globalMsg" aria-live="polite"></div>
+
+        <section id="view" aria-live="polite">
+          <div class="loading-card">Loading dashboard…</div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <span>LEE WIFI</span>
+    <span>Administration</span>
+  </footer>
+</body>
+</html>
+```
