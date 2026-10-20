@@ -1,14 +1,56 @@
-// Network controller adapter (PRD section 9). THIS IS A MOCK: it logs but does NOT block or allow real traffic.
-// Replace with a MikroTik / RADIUS / OpenWrt adapter after the Phase 0 router feasibility check.
+
+export type ControllerMode = 'mock' | 'router';
+
+export interface NetworkStatus {
+  controller: string;
+  mode: ControllerMode;
+  enforcing: boolean;
+  message: string;
+}
+
 export interface Controller {
   name: string;
+  mode: ControllerMode;
   enforcing: boolean;
-  authorize(s: { deviceId: string; expiresAt: Date }): Promise<void>;
+
+  status(): NetworkStatus;
+
+  authorize(session: {
+    deviceId: string;
+    expiresAt: Date;
+  }): Promise<void>;
+
   revoke(deviceId: string): Promise<void>;
 }
+
+// Safe local-development controller.
+// It records intended actions but does NOT control real internet traffic.
 export const network: Controller = {
   name: 'Mock controller',
+  mode: 'mock',
   enforcing: false,
-  async authorize(s) { console.log('[network] authorize', s.deviceId, 'until', s.expiresAt.toISOString()); },
-  async revoke(deviceId) { console.log('[network] revoke', deviceId); },
+
+  status() {
+    return {
+      controller: this.name,
+      mode: this.mode,
+      enforcing: this.enforcing,
+      message:
+        'Development mode: session actions are logged only. ' +
+        'Real network access is not enforced.',
+    };
+  },
+
+  async authorize(session) {
+    console.log(
+      '[network] authorize',
+      session.deviceId,
+      'until',
+      session.expiresAt.toISOString()
+    );
+  },
+
+  async revoke(deviceId) {
+    console.log('[network] revoke', deviceId);
+  },
 };
