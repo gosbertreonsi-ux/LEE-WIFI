@@ -2,7 +2,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// Local dev uses SQLite (no install). For production switch provider to "postgresql" and update DATABASE_URL.
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -32,10 +31,10 @@ model Order {
   id               Int       @id @default(autoincrement())
   phone            String
   packageId        Int
-  package          Package   @relation(fields: [packageId], references: [id])
   priceTzsSnapshot Int
   status           String    @default("CREATED")
   createdAt        DateTime  @default(now())
+  package          Package   @relation(fields: [packageId], references: [id])
   payment          Payment?
   vouchers         Voucher[]
 }
@@ -43,37 +42,37 @@ model Order {
 model Payment {
   id                Int       @id @default(autoincrement())
   orderId           Int       @unique
-  order             Order     @relation(fields: [orderId], references: [id])
   internalReference String    @unique
   providerReference String?   @unique
   amountTzs         Int
   status            String    @default("PENDING")
   verifiedAt        DateTime?
   createdAt         DateTime  @default(now())
+  order             Order     @relation(fields: [orderId], references: [id])
 }
 
 model Voucher {
   id         Int       @id @default(autoincrement())
   codeHash   String    @unique
   packageId  Int
-  package    Package   @relation(fields: [packageId], references: [id])
   orderId    Int?
-  order      Order?    @relation(fields: [orderId], references: [id])
   status     String    @default("AVAILABLE")
   redeemedAt DateTime?
   expiresAt  DateTime?
   createdAt  DateTime  @default(now())
   sessions   Session[]
+  order      Order?    @relation(fields: [orderId], references: [id])
+  package    Package   @relation(fields: [packageId], references: [id])
 }
 
 model Session {
   id        Int      @id @default(autoincrement())
   voucherId Int
-  voucher   Voucher  @relation(fields: [voucherId], references: [id])
   deviceId  String
   startedAt DateTime @default(now())
   expiresAt DateTime
   status    String   @default("ACTIVE")
+  voucher   Voucher  @relation(fields: [voucherId], references: [id])
 }
 
 model AuditLog {

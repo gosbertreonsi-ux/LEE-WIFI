@@ -187,4 +187,77 @@ setInterval(() => { endSessions({ expiresAt: { lte: new Date() } }).catch((e) =>
 
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use((e: any, _q: Request, s: Response, _n: NextFunction) => { console.error(e); s.status(500).json({ error: 'Something went wrong' }); });
+
+
+let expirySweepRunning = false;
+
+async function sweepExpiredSessions(): Promise<void> {
+  if (expirySweepRunning) return;
+
+  expirySweepRunning = true;
+
+  try {
+    const now = new Date();
+
+    const expired = await db.session.findMany({
+      where: {
+        status: 'ACTIVE',
+        expiresAt: { lte: now },
+      },
+      select: {
+        id: true,
+        deviceId: true,
+      },
+    });
+
+    if (expired.length === 0) return;
+
+    const expiredIds = expired.map((session) => session.id);
+
+    await db.session.updateMany({
+      where: {
+        id: { in: expiredIds },
+        status: 'ACTIVE',
+        expiresAt: { lte: new Date() },
+      },
+      data: { status: 'ENDED' },
+    });
+
+    const deviceIds = [
+      ...new Set(expired.map((session) => session.deviceId)),
+    ];
+
+    for (const deviceId of deviceIds) {
+      const stillActive = await db.session.findFirst({
+        where: {
+          deviceId,
+          status: 'ACTIVE',
+          expiresAt: { gt: new Date() },
+        },
+        select: { id: true },
+      });
+
+      if (!stillActive) {
+        await network.revoke(deviceId);
+      }
+    }
+
+    console.log(
+      `[expiry] Processed ${expired.length} expired session(s).`
+    );
+  } catch (error) {
+    console.error('[expiry] Session cleanup failed:', error);
+  } finally {
+    expirySweepRunning = false;
+  }
+}
+
+// Run once on startup, then check every 15 seconds.
+void sweepExpiredSessions();
+
+setInterval(() => {
+  void sweepExpiredSessions();
+}, 15_000);
+
+
 app.listen(PORT, () => console.log(`Mizizi Wi-Fi: http://localhost:${PORT}  (admin: /admin.html, payments: ${SIM ? 'SIMULATOR' : 'live'})`));
