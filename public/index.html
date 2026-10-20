@@ -1,18 +1,162 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mizizi Wi-Fi</title><link rel="stylesheet" href="styles.css"></head><body>
-<div class="wrap">
-<header class="top"><span class="brand">Mizizi <b>Wi-Fi</b></span><span class="muted" id="dev"></span></header>
-<section class="hero"><h1>Pay for the signal. Ride it out.</h1><p>Pick a package, pay with your phone, and get a voucher code that connects you for exactly the time you bought.</p></section>
-<section id="status" class="card" hidden><h2>You are connected</h2><p class="muted">Time left</p><div class="timer" id="left">--:--:--</div></section>
-<section id="pkgs"><h2>Choose a package</h2><div class="grid" id="grid"><p class="muted">Loading packages...</p></div></section>
-<section id="checkout" class="card" hidden>
- <h2 id="coTitle"></h2><p id="coInfo" class="muted"></p>
- <div id="step1"><label for="phone">Mobile money phone number</label><input id="phone" inputmode="tel" placeholder="0712 345 678" autocomplete="tel">
- <button class="btn" id="go">Pay now</button><button class="btn ghost" id="back">Back to packages</button></div>
- <div id="step2" hidden><p>Payment request created. Reference: <b id="ref"></b></p>
- <div id="simBox" hidden><p class="muted">Test mode: no real money moves. Choose an outcome.</p><button class="btn" id="simOk">Simulate successful payment</button><button class="btn ghost" id="simNo">Simulate failed payment</button></div>
- <p id="noProv" class="muted" hidden>Live payments are not connected yet.</p></div>
- <div id="step3" hidden><p>Payment confirmed. Save your voucher code:</p><div class="code" id="vcode"></div><button class="btn" id="useIt">Connect now</button></div>
- <div id="coMsg"></div>
-</section>
-<section class="card" style="margin-top:22px"><h2>Already have a voucher?</h2><label for="vin">Voucher code</label><input id="vin" placeholder="XXXXX-XXXXX" autocapitalize="characters" maxlength="11"><button class="btn" id="redeem">Connect with voucher</button><div id="rMsg"></div></section>
-</div><footer class="swatch" aria-hidden="true"><i style="background:#1c1713"></i><i style="background:#4a3320"></i><i style="background:#7f5f3c"></i><i style="background:#c4a075"></i><i style="background:#b07a37"></i><i style="background:#6b2a08"></i><i style="background:#b85c05"></i></footer><script src="portal.js"></script></body></html>
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17130f">
+  <meta name="description" content="Choose a Wi-Fi package, manage your voucher, and check your session with LEE WIFI.">
+  <title>LEE WIFI — Internet Access</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="portal.js" defer></script>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="/" aria-label="LEE WIFI home">
+        LEE <b>WIFI</b><span class="brand-dot">.</span>
+      </a>
+      <span class="live-indicator"><span class="live-dot"></span> INTERNET ACCESS</span>
+    </header>
+
+    <main>
+      <section class="hero">
+        <p class="eyebrow">SIMPLE. FAST. CONNECTED.</p>
+        <h1>Your internet.<br><span>Your time.</span></h1>
+        <p class="hero-copy">
+          Choose a package that fits your needs, complete the available
+          payment flow, and redeem your voucher to start a session.
+        </p>
+        <a class="btn hero-btn" href="#pkgs">Explore packages <span aria-hidden="true">↓</span></a>
+      </section>
+
+      <section id="networkNotice" class="notice" aria-live="polite">
+        <span class="notice-icon" aria-hidden="true">i</span>
+        <div>
+          <strong id="networkTitle">Checking network status…</strong>
+          <p id="networkText">Checking the network controller configuration.</p>
+        </div>
+      </section>
+
+      <section id="status" class="card session-card" hidden aria-live="polite">
+        <div class="section-kicker">YOUR SESSION</div>
+        <h2 id="sessionTitle">Session active</h2>
+        <p id="sessionDescription" class="muted">Your session expiry countdown.</p>
+        <div class="timer" id="left">--:--:--</div>
+        <p id="sessionExpiry" class="muted"></p>
+      </section>
+
+      <section id="pkgs" class="section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">PICK YOUR PLAN</p>
+            <h2>Choose a package</h2>
+          </div>
+          <span class="section-number">01 / PACKAGES</span>
+        </div>
+        <div class="grid" id="grid" aria-live="polite">
+          <div class="loading-card">Loading available packages…</div>
+        </div>
+      </section>
+
+      <section id="checkout" class="card checkout-card" hidden>
+        <div class="section-kicker">SECURE YOUR SESSION</div>
+        <h2 id="coTitle">Package checkout</h2>
+        <p id="coInfo" class="muted"></p>
+
+        <div id="step1">
+          <label for="phone">Mobile money phone number</label>
+          <input id="phone" type="tel" inputmode="tel"
+            placeholder="e.g. 0712 345 678" autocomplete="tel"
+            maxlength="20" required>
+          <p class="field-hint">
+            Use the number requested by your payment provider.
+          </p>
+          <button class="btn" id="go" type="button">Continue to payment →</button>
+          <button class="btn ghost" id="back" type="button">Back to packages</button>
+        </div>
+
+        <div id="step2" hidden>
+          <div class="reference-box">
+            <span class="muted">Payment reference</span>
+            <strong id="ref"></strong>
+          </div>
+          <p id="paymentInstructions">
+            Your payment request has been created.
+          </p>
+
+          <div id="simBox" hidden>
+            <div class="test-label">DEVELOPMENT MODE</div>
+            <p class="muted">
+              This is a test payment. No real money moves and this does not
+              contact a mobile money provider.
+            </p>
+            <button class="btn" id="simOk" type="button">
+              Simulate successful payment
+            </button>
+            <button class="btn ghost" id="simNo" type="button">
+              Simulate failed payment
+            </button>
+          </div>
+
+          <p id="noProv" class="notice-inline" hidden>
+            Live payments are not connected yet. Do not send money based
+            on this test checkout.
+          </p>
+        </div>
+
+        <div id="step3" hidden>
+          <div class="success-mark" aria-hidden="true">✓</div>
+          <h3>Payment confirmed in the app</h3>
+          <p class="muted">
+            Save your voucher code. Keep it private until you are ready to use it.
+          </p>
+          <div class="code" id="vcode"></div>
+          <button class="btn" id="copyCode" type="button">Copy voucher code</button>
+          <button class="btn" id="useIt" type="button">Redeem voucher →</button>
+        </div>
+
+        <div id="coMsg" aria-live="polite"></div>
+      </section>
+
+      <section id="voucherSection" class="section voucher-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">ALREADY PURCHASED?</p>
+            <h2>Redeem your voucher</h2>
+          </div>
+          <span class="section-number">02 / CONNECT</span>
+        </div>
+
+        <div class="card voucher-card">
+          <p class="muted">
+            Enter the voucher code you received to start or resume your session.
+          </p>
+          <label for="vin">Your voucher code</label>
+          <input id="vin" type="text" placeholder="XXXXX-XXXXX"
+            autocapitalize="characters" autocomplete="off"
+            maxlength="11" spellcheck="false">
+          <button class="btn" id="redeem" type="button">Redeem voucher →</button>
+          <div id="rMsg" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="help-strip">
+        <span class="help-symbol" aria-hidden="true">?</span>
+        <div>
+          <strong>Need help connecting?</strong>
+          <p class="muted">
+            Contact the Wi-Fi operator if your voucher is invalid or your
+            payment status is unclear.
+          </p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <span>LEE WIFI</span>
+    <span>Access made simple.</span>
+  </footer>
+</body>
+</html>
