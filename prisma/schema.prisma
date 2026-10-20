@@ -1,66 +1,85 @@
-generator client { provider = "prisma-client-js" }
+generator client {
+  provider = "prisma-client-js"
+}
+
 // Local dev uses SQLite (no install). For production switch provider to "postgresql" and update DATABASE_URL.
-datasource db { provider = "sqlite"
-  url = env("DATABASE_URL") }
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
-model AdminUser { id Int @id @default(autoincrement())
-  email String @unique
+model AdminUser {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
   passwordHash String
-  createdAt DateTime @default(now()) }
+  createdAt    DateTime @default(now())
+}
 
-model Package { id Int @id @default(autoincrement())
-  name String
-  description String @default("")
-  priceTzs Int
+model Package {
+  id              Int       @id @default(autoincrement())
+  name            String
+  description     String    @default("")
+  priceTzs        Int
   durationSeconds Int
-  maxDevices Int @default(1)
-  isActive Boolean @default(true)
-  createdAt DateTime @default(now())
-  orders Order[]
-  vouchers Voucher[] }
+  maxDevices      Int       @default(1)
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  orders          Order[]
+  vouchers        Voucher[]
+}
 
-model Order { id Int @id @default(autoincrement())
-  phone String
-  packageId Int
-  package Package @relation(fields: [packageId], references: [id])
+model Order {
+  id               Int       @id @default(autoincrement())
+  phone            String
+  packageId        Int
+  package          Package   @relation(fields: [packageId], references: [id])
   priceTzsSnapshot Int
-  status String @default("CREATED")
-  createdAt DateTime @default(now())
-  payment Payment?
-  vouchers Voucher[] }
+  status           String    @default("CREATED")
+  createdAt        DateTime  @default(now())
+  payment          Payment?
+  vouchers         Voucher[]
+}
 
-model Payment { id Int @id @default(autoincrement())
-  orderId Int @unique
-  order Order @relation(fields: [orderId], references: [id])
-  internalReference String @unique
-  providerReference String? @unique
-  amountTzs Int
-  status String @default("PENDING")
-  verifiedAt DateTime?
-  createdAt DateTime @default(now()) }
+model Payment {
+  id                Int       @id @default(autoincrement())
+  orderId           Int       @unique
+  order             Order     @relation(fields: [orderId], references: [id])
+  internalReference String    @unique
+  providerReference String?   @unique
+  amountTzs         Int
+  status            String    @default("PENDING")
+  verifiedAt        DateTime?
+  createdAt         DateTime  @default(now())
+}
 
-model Voucher { id Int @id @default(autoincrement())
-  codeHash String @unique
-  packageId Int
-  package Package @relation(fields: [packageId], references: [id])
-  orderId Int?
-  order Order? @relation(fields: [orderId], references: [id])
-  status String @default("AVAILABLE")
+model Voucher {
+  id         Int       @id @default(autoincrement())
+  codeHash   String    @unique
+  packageId  Int
+  package    Package   @relation(fields: [packageId], references: [id])
+  orderId    Int?
+  order      Order?    @relation(fields: [orderId], references: [id])
+  status     String    @default("AVAILABLE")
   redeemedAt DateTime?
-  expiresAt DateTime?
-  createdAt DateTime @default(now())
-  sessions Session[] }
+  expiresAt  DateTime?
+  createdAt  DateTime  @default(now())
+  sessions   Session[]
+}
 
-model Session { id Int @id @default(autoincrement())
+model Session {
+  id        Int      @id @default(autoincrement())
   voucherId Int
-  voucher Voucher @relation(fields: [voucherId], references: [id])
-  deviceId String
+  voucher   Voucher  @relation(fields: [voucherId], references: [id])
+  deviceId  String
   startedAt DateTime @default(now())
   expiresAt DateTime
-  status String @default("ACTIVE") }
+  status    String   @default("ACTIVE")
+}
 
-model AuditLog { id Int @id @default(autoincrement())
-  actor String
-  action String
-  meta String @default("{}")
-  createdAt DateTime @default(now()) }
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  actor     String
+  action    String
+  meta      String   @default("{}")
+  createdAt DateTime @default(now())
+}
