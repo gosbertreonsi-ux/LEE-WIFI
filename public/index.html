@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mizizi Wi-Fi</title><link rel="stylesheet" href="styles.css"></head><body>
+<div class="wrap">
+<header class="top"><span class="brand">Mizizi <b>Wi-Fi</b></span><span class="muted" id="dev"></span></header>
+<section class="hero"><h1>Pay for the signal. Ride it out.</h1><p>Pick a package, pay with your phone, and get a voucher code that connects you for exactly the time you bought.</p></section>
+<section id="status" class="card" hidden><h2>You are connected</h2><p class="muted">Time left</p><div class="timer" id="left">--:--:--</div></section>
+<section id="pkgs"><h2>Choose a package</h2><div class="grid" id="grid"><p class="muted">Loading packages...</p></div></section>
+<section id="checkout" class="card" hidden>
+ <h2 id="coTitle"></h2><p id="coInfo" class="muted"></p>
+ <div id="step1"><label for="phone">Mobile money phone number</label><input id="phone" inputmode="tel" placeholder="0712 345 678" autocomplete="tel">
+ <button class="btn" id="go">Pay now</button><button class="btn ghost" id="back">Back to packages</button></div>
+ <div id="step2" hidden><p>Payment request created. Reference: <b id="ref"></b></p>
+ <div id="simBox" hidden><p class="muted">Test mode: no real money moves. Choose an outcome.</p><button class="btn" id="simOk">Simulate successful payment</button><button class="btn ghost" id="simNo">Simulate failed payment</button></div>
+ <p id="noProv" class="muted" hidden>Live payments are not connected yet.</p></div>
+ <div id="step3" hidden><p>Payment confirmed. Save your voucher code:</p><div class="code" id="vcode"></div><button class="btn" id="useIt">Connect now</button></div>
+ <div id="coMsg"></div>
+</section>
+<section class="card" style="margin-top:22px"><h2>Already have a voucher?</h2><label for="vin">Voucher code</label><input id="vin" placeholder="XXXXX-XXXXX" autocapitalize="characters" maxlength="11"><button class="btn" id="redeem">Connect with voucher</button><div id="rMsg"></div></section>
+</div><footer class="swatch" aria-hidden="true"><i style="background:#1c1713"></i><i style="background:#4a3320"></i><i style="background:#7f5f3c"></i><i style="background:#c4a075"></i><i style="background:#b07a37"></i><i style="background:#6b2a08"></i><i style="background:#b85c05"></i></footer><script src="portal.js"></script></body></html>
