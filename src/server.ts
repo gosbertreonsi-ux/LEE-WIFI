@@ -42,7 +42,19 @@ const loginLimit = rateLimit({ windowMs: 15 * 60e3, limit: 10, message: { error:
 const redeemLimit = rateLimit({ windowMs: 10 * 60e3, limit: 20, message: { error: 'Too many voucher attempts. Wait a few minutes.' } });
 const orderLimit = rateLimit({ windowMs: 10 * 60e3, limit: 30, message: { error: 'Too many requests. Wait a few minutes.' } });
 
-app.get('/api/config', (_q, s) => { s.json({ simulator: SIM }); });
+
+app.get('/api/config', (_q, s) => {
+  s.json({
+    simulator: SIM,
+    network: network.status(),
+  });
+});
+
+app.get('/api/network/status', (_q, s) => {
+  s.json(network.status());
+});
+
+
 app.get('/api/packages', h(async (_q, s) => {
   s.json(await db.package.findMany({ where: { isActive: true }, orderBy: { priceTzs: 'asc' } }));
 }));
